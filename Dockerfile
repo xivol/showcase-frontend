@@ -3,18 +3,16 @@ RUN npm install -g pnpm
 WORKDIR /app
 
 # Copy only what's needed for installing dependencies
-COPY package.json pnpm-lock.yaml* ./
-# Copy the vendor directory (contains local .tgz files)
+COPY package.json pnpm-lock.yaml ./
 COPY vendor ./vendor
 
-# Install dependencies (including local file: vendor/*.tgz)
-FROM base AS deps
-# Install dependencies with build scripts automatically allowed
+# Install dependencies (still blocked for security)
+RUN pnpm install --frozen-lockfile --config.ignore-scripts=false
+
+# ✅ Approve all pending builds non-interactively
 RUN pnpm approve-builds --all
-RUN pnpm install --no-frozen-lockfile
 
 # Copy the rest of the source and build
-FROM deps AS build
 COPY . .
 RUN pnpm run build
 
@@ -22,6 +20,6 @@ RUN pnpm run build
 FROM node:22-alpine
 RUN npm install -g serve
 WORKDIR /app
-COPY --from=build /app/dist ./dist
+COPY --from=base /app/dist ./dist
 EXPOSE 5173
 CMD [ "serve", "-s", "dist", "-l", "5173" ]

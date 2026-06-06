@@ -6,7 +6,7 @@ COPY package.json pnpm-lock.yaml ./
 
 # ---- Dependencies ----
 FROM base AS deps
-RUN pnpm install --frozen-lockfile
+RUN pnpm install
 
 # ---- Build ----
 FROM deps AS build

@@ -9,6 +9,7 @@ USER nextjs
 
 # Install dependencies (including local file: vendor/*.tgz)
 FROM base AS deps
+RUN pnpm config set unsafe-perm true
 RUN pnpm install --no-frozen-lockfile
 
 # Copy the rest of the source and build

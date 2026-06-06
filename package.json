@@ -5,7 +5,7 @@
   "type": "module",
   "pnpm": {
     "onlyBuiltDependencies": ["esbuild"]
-  }
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",

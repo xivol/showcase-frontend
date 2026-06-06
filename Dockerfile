@@ -9,6 +9,7 @@ COPY vendor ./vendor
 
 # Install dependencies (including local file: vendor/*.tgz)
 FROM base AS deps
+ENV PNPM_IGNORE_SCRIPTS=false
 RUN pnpm install --no-frozen-lockfile   # or just pnpm install
 
 # Copy the rest of the source and build

@@ -10,6 +10,7 @@ COPY vendor ./vendor
 # Install dependencies (including local file: vendor/*.tgz)
 FROM base AS deps
 # Install dependencies with build scripts automatically allowed
+RUN pnpm approve-builds --all
 RUN pnpm install --no-frozen-lockfile
 
 # Copy the rest of the source and build

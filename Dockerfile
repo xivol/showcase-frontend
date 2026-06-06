@@ -1,19 +1,22 @@
-# ---- Base Stage ----
 FROM node:22-alpine AS base
 RUN npm install -g pnpm
 WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
 
-# ---- Dependencies ----
+# Copy only what's needed for installing dependencies
+COPY package.json pnpm-lock.yaml* ./
+# Copy the vendor directory (contains local .tgz files)
+COPY vendor ./vendor
+
+# Install dependencies (including local file: vendor/*.tgz)
 FROM base AS deps
-RUN pnpm install
+RUN pnpm install --no-frozen-lockfile   # or just pnpm install
 
-# ---- Build ----
+# Copy the rest of the source and build
 FROM deps AS build
 COPY . .
 RUN pnpm run build
 
-# ---- Production ----
+# Production stage
 FROM node:22-alpine
 RUN npm install -g serve
 WORKDIR /app

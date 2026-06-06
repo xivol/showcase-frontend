@@ -1,16 +1,15 @@
 FROM node:22-alpine AS base
 RUN npm install -g pnpm
+RUN addgroup -g 1001 -S nodejs && adduser -S nextjs -u 1001
 WORKDIR /app
-
-# Copy only what's needed for installing dependencies
 COPY package.json pnpm-lock.yaml* ./
-# Copy the vendor directory (contains local .tgz files)
 COPY vendor ./vendor
+RUN chown -R nextjs:nodejs /app
+USER nextjs
 
 # Install dependencies (including local file: vendor/*.tgz)
 FROM base AS deps
-ENV PNPM_IGNORE_SCRIPTS=false
-RUN pnpm install --no-frozen-lockfile   # or just pnpm install
+RUN pnpm install --no-frozen-lockfile
 
 # Copy the rest of the source and build
 FROM deps AS build
